@@ -2,7 +2,7 @@
   "name": "vitepress-plugin-helper",
   "private": false,
   "version": "0.0.1",
-  "description": "A Vitepress plugin that helps generate NAVs and sidebars and watch MD file changes to restart the service",
+  "description": "A Vitepress plugin that helps generate nav and sidebars and watch MarkDown file changes to restart the service",
   "type": "module",
   "author": "PeiYanlu",
   "license": "MIT",
@@ -41,9 +41,9 @@
     "type": "git",
     "url": "git+ssh://git@github.com:peiyanlu/vitepress-helper.git"
   },
-  "homepage": "https://github.com/peiyanlu/live2d-lib#readme",
+  "homepage": "https://github.com/peiyanlu/vitepress-helper/tree/dev/packages/helper#readme",
   "bugs": {
-    "url": "https://github.com/peiyanlu/live2d-lib/issues"
+    "url": "https://github.com/peiyanlu/vitepress-helper/issues"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
@@ -51,12 +51,15 @@
   "files": [
     "dist",
     "bin",
+    "img",
+    "LICENSE",
     "README.md"
   ],
   "keywords": [
     "vitepress",
     "helper",
     "sidebar",
-    "nav"
+    "nav",
+    "auto"
   ]
 }

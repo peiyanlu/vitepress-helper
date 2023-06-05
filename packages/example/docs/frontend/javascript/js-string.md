@@ -1,0 +1,6 @@
+---
+title: String
+---
+
+
+# {{ $frontmatter.title }}

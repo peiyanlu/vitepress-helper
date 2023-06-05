@@ -1,0 +1,19 @@
+{
+  "name": "vitepress-helper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:dev": "turbo run docs:dev --no-daemon",
+    "build": "turbo run build --no-daemon",
+    "dev": "turbo run dev --no-daemon"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "turbo": "^1.10.1",
+    "vitepress": "1.0.0-beta.1"
+  }
+}

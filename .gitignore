@@ -1,0 +1,6 @@
+.git
+.idea
+node_modules
+.vitepress/dist
+.vitepress/cache
+.turbo

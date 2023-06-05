@@ -1,0 +1,6 @@
+---
+title: Array
+---
+
+
+# {{ $frontmatter.title }}

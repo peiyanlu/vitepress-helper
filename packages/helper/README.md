@@ -68,7 +68,9 @@ group: true
 ---
 ```
 
-`getNavItem` 会同过目录下的 `index.md(targetMDFile)` 读取目录来生成导航栏，如果指定了 `group：true`，我们需要为子目录提供一个 `targetMDFile`，否则子目录不会显示
+`getNavItem` 会同过目录下的 `index.md(targetMDFile)` 读取目录来生成导航栏，如果指定了 `group：true`，我们需要为子目录提供一个 `targetMDFile`，否则子目录不会显示。
+
+查看示例： [配置在docs](https://github.com/peiyanlu/vitepress-helper/tree/dev/packages/example)，[配置在根目录](https://github.com/peiyanlu/vitepress-helper/tree/dev/packages/example-root)
 
 ```     
 ├───backend                      
@@ -275,7 +277,6 @@ const sidebar = flatNavs(nav)
 在通过 VitePress CLI 构建项目时初始化配置的位置一般是 `docs`，如果使用了自定义，需要在参数中指定 `rootDir`，如果初始化配置在根目录，使用 `rootDir: '.'`
 
 ## CLI
-
 
 创建（例如，'docs/.vitepress/helper/restart-trigger.ts'）文件在 `config.ts` 中引入。
 `vitepress-helper watch` 将监视指定目录中 `MarkDown` 文件的新增和删除等操作，当文件更改时它将重写 `docs/.vitepress/helper/restart-trigger.ts` 以触发服务重新启动

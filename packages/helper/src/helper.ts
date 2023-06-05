@@ -5,6 +5,8 @@ import { dirname, extname, parse } from 'path'
 import type { BuildNavOptions, BuildSidebarOptions, CustomNavFrontMatter, CustomSidebarFrontMatter, ExtendNavItem, ExtendSidebarItem } from './helper-types'
 
 
+export * from './helper-types'
+
 export const pathJoin = (...paths: string[]) => paths.join('/').replace(/\/+/g, '/')
 
 export const pathToLink = (path: string, rootDir = 'docs'): string => path
@@ -36,7 +38,7 @@ export const getNavItem = <T extends ExtendNavItem>(path: string, options?: Buil
     const { path, name } = entry
     const data = matter.read(path).data as CustomNavFrontMatter
     
-    const link = pathToLink(path.startsWith(rootDir) ? path : pathJoin(rootDir,path), rootDir)
+    const link = pathToLink(path.startsWith(rootDir) ? path : pathJoin(rootDir, path), rootDir)
     
     const item = {
       text: data.title ?? dirname(name),
@@ -127,7 +129,7 @@ export const getSidebarItem = (path: string, options?: BuildSidebarOptions): Ext
         
         const linkPath = pathJoin(path, targetMDFile)
         
-        const onlyLink = ()=> {
+        const onlyLink = () => {
           groups.push({
             text: showCount ? `[${ items.length }] ${ text }` : text,
             items: items,

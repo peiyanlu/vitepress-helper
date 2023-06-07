@@ -112,10 +112,11 @@ export const getSidebarItem = (path: string, options?: BuildSidebarOptions): Ext
       if (isFile) {
         if ([ '.md' ].includes(extname(path))) {
           const data = matter.read(path).data as CustomSidebarFrontMatter
+          const { name:fileName } = parse(path)
           groups.push({
-            text: data.title ?? parse(path).name,
+            text: data.title ?? fileName,
             link: pathToLink(path, rootDir),
-            order: data.order ?? 0,
+            order: data.order ?? fileName.charCodeAt(0),
           })
         }
       } else {

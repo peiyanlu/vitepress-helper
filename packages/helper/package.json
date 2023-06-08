@@ -1,7 +1,7 @@
 {
   "name": "vitepress-plugin-helper",
   "private": false,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A Vitepress plugin that helps generate nav and sidebars and watch MarkDown file changes to restart the service",
   "type": "module",
   "author": "PeiYanlu",

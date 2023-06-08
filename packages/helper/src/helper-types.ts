@@ -4,6 +4,7 @@ import { DefaultTheme } from 'vitepress'
 export interface CustomFrontMatter {
   title: string;
   order: number;
+  ignore: boolean;
 }
 export interface CustomNavFrontMatter extends CustomFrontMatter {
   sidebar: boolean;
@@ -97,5 +98,6 @@ export interface SidebarMapping {
     text: string;
     order?: number;
     collapsed?: boolean;
+    ignore?: boolean;
   };
 }

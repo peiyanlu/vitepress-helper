@@ -38,6 +38,8 @@ export const getNavItem = <T extends ExtendNavItem>(path: string, options?: Buil
     const { path, name } = entry
     const data = matter.read(path).data as CustomNavFrontMatter
     
+    if (data.ignore) return groups
+    
     const link = pathToLink(path.startsWith(rootDir) ? path : pathJoin(rootDir, path), rootDir)
     
     const item = {
@@ -112,47 +114,54 @@ export const getSidebarItem = (path: string, options?: BuildSidebarOptions): Ext
       if (isFile) {
         if ([ '.md' ].includes(extname(path))) {
           const data = matter.read(path).data as CustomSidebarFrontMatter
-          const { name:fileName } = parse(path)
-          groups.push({
-            text: data.title ?? fileName,
-            link: pathToLink(path, rootDir),
-            order: data.order ?? fileName.charCodeAt(0),
-          })
+          if (!data.ignore) {
+            const { name: fileName } = parse(path)
+            groups.push({
+              text: data.title ?? fileName,
+              link: pathToLink(path, rootDir),
+              order: data.order ?? fileName.charCodeAt(0),
+            })
+          }
         }
       } else {
         const items = getItems(path)
         
         const mapping = sidebarMapping?.[name]
         const isStr = typeof mapping === 'string'
-        const text = isStr ? mapping : mapping?.text ?? name
-        const order = isStr ? name.charCodeAt(0) : mapping?.order ?? name.charCodeAt(0)
-        const collapse = isStr ? true : mapping?.collapsed ?? true
+        const textMapping = isStr ? mapping : mapping?.text ?? name
+        const orderMapping = isStr ? name.charCodeAt(0) : mapping?.order ?? name.charCodeAt(0)
+        const collapsedMapping = isStr ? true : mapping?.collapsed ?? true
+        const ignoreMapping = isStr ? false : mapping?.ignore ?? false
         
         const linkPath = pathJoin(path, targetMDFile)
         
-        const onlyLink = () => {
-          groups.push({
-            text: showCount ? `[${ items.length }] ${ text }` : text,
-            items: items,
-            collapsed: collapsed ?? collapse,
-            order: order,
-          })
+        const onlyItems = () => {
+          if (!ignoreMapping) {
+            groups.push({
+              text: showCount ? `[${ items.length }] ${ textMapping }` : textMapping,
+              items: items,
+              collapsed: collapsed ?? collapsedMapping,
+              order: orderMapping,
+            })
+          }
         }
         if (groupWithLink) {
           if (fs.existsSync(linkPath)) {
             const data = matter.read(linkPath).data as CustomSidebarFrontMatter
-            groups.push({
-              text: showCount ? `[${ items.length }] ${ data.title ?? text }` : data.title ?? text,
-              link: pathToLink(linkPath, rootDir),
-              items: items,
-              collapsed: collapsed ?? data.collapsed ?? collapse,
-              order: data.order ?? order,
-            })
+            if (data.ignore ?? ignoreMapping) {
+              groups.push({
+                text: showCount ? `[${ items.length }] ${ data.title ?? textMapping }` : data.title ?? textMapping,
+                link: pathToLink(linkPath, rootDir),
+                items: items,
+                collapsed: collapsed ?? data.collapsed ?? collapsedMapping,
+                order: data.order ?? orderMapping,
+              })
+            }
           } else {
-            onlyLink()
+            onlyItems()
           }
         } else {
-          onlyLink()
+          onlyItems()
         }
       }
       

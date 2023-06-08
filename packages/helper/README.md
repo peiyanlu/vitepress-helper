@@ -65,6 +65,7 @@ title: Title
 order: 1
 sidebar: true
 group: true
+ignore: false
 ---
 ```
 
@@ -239,6 +240,7 @@ interface SidebarMapping {
     text: string;
     order?: number;
     collapsed?: boolean;
+    ignore?: boolean;
   };
 }
 ```
@@ -254,6 +256,7 @@ interface SidebarMapping {
 title: Title
 order: 1
 collapsed: false
+ignore: false
 ---
 ```
 

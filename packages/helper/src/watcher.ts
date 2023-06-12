@@ -1,8 +1,9 @@
+import chalk from 'chalk'
+import { exec } from 'child_process'
 import chokidar from 'chokidar'
 import { Command } from 'commander'
 import fs from 'fs'
 import path from 'path'
-import chalk from 'chalk'
 
 
 const program = new Command()
@@ -11,30 +12,41 @@ const doWatch = (input: string, output: string) => {
   const watcher = chokidar.watch(`${ input }/**/*.md`.replace(/\/+/g, '/'))
   
   let isReady = false
+  const listener = () => {
+    if (isReady) {
+      const file = path.join(process.cwd(), output)
+      fs.writeFileSync(
+        file,
+        `// ${ new Date() }`,
+      )
+    }
+  }
   
   watcher
     .on('ready', () => {
       isReady = true
     })
-    .on('all', () => {
-      if (isReady) {
-        const file = path.join(process.cwd(), output)
-        fs.writeFileSync(
-          file,
-          `// ${ new Date() }`,
-        )
-      }
-    })
+    .on('add', listener)
+    .on('addDir', listener)
+    .on('unlink', listener)
+    .on('unlinkDir', listener)
+    .on('error', console.error)
+  
   
   console.log(chalk.green('[vitepress-helper]'), chalk.gray(`watching > ${ input }`))
+  
+  process.on('beforeExit', (code) => {
+    console.log(`ERROR: "vitepress-helper watch" exited with ${ code }.\n`)
+  })
   
   process.on('exit', async () => {
     console.log(chalk.green('[vitepress-helper]'), chalk.gray(`unwatch > ${ input }`))
     await watcher.close()
+    exec(`taskkill /PID ${ process.pid } /T /F`)
   })
   
   process.on('SIGINT', () => {
-    process.exit(1)
+    process.exitCode = 1
   })
 }
 

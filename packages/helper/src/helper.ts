@@ -24,7 +24,12 @@ export const pathToLink = (path: string, rootDir = 'docs'): string => path
  * @returns {T[]}
  */
 export const getNavItem = <T extends ExtendNavItem>(path: string, options?: BuildNavOptions): T[] => {
-  const { ignore = [], rootDir = 'docs', useCustomPath, targetMDFile = 'index.md' } = options || {}
+  const {
+    ignore = [],
+    rootDir = 'docs',
+    useCustomPath,
+    targetMDFile = 'index.md',
+  } = options || {}
   
   return sync(
     useCustomPath ? path : pathJoin(path, `/**/${ targetMDFile }`),
@@ -35,7 +40,10 @@ export const getNavItem = <T extends ExtendNavItem>(path: string, options?: Buil
       deep: 2,
     },
   ).reduce<T[]>((groups, entry) => {
-    const { path, name } = entry
+    const {
+      path,
+      name,
+    } = entry
     const data = matter.read(path).data as CustomNavFrontMatter
     
     if (data.ignore) return groups
@@ -89,7 +97,7 @@ export const flatNavs = (nav: ExtendNavItem[]): ExtendNavItem[] => {
  */
 export const getSidebarItem = (path: string, options?: BuildSidebarOptions): ExtendSidebarItem[] => {
   const {
-    ignore,
+    ignore = [],
     rootDir = 'docs',
     useCustomPath,
     sidebarMapping,
@@ -104,11 +112,15 @@ export const getSidebarItem = (path: string, options?: BuildSidebarOptions): Ext
       {
         onlyFiles: false,
         objectMode: true,
-        ignore: ignore || [ '**/img/**', '**/components/**', pathJoin('**/', targetMDFile) ],
+        ignore: [ pathJoin('**/', targetMDFile), ...ignore ],
         deep: 1,
       },
     ).reduce<ExtendSidebarItem[]>((groups, article) => {
-      const { path, dirent, name } = article
+      const {
+        path,
+        dirent,
+        name,
+      } = article
       const isFile = dirent.isFile()
       
       if (isFile) {

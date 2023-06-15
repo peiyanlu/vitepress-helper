@@ -9,27 +9,52 @@ import path from 'path'
 const program = new Command()
 
 const doWatch = (input: string, output: string) => {
-  const watcher = chokidar.watch(`${ input }/**/*.md`.replace(/\/+/g, '/'))
+  const pathJoin = (...paths: string[]) => paths.join('/').replace(/\/+/g, '/')
   
-  let isReady = false
-  const listener = () => {
-    if (isReady) {
-      const file = path.join(process.cwd(), output)
-      fs.writeFileSync(
-        file,
-        `// ${ new Date() }`,
-      )
+  const ignored = [
+    '**/.vitepress/**',
+    '**/dev-dist/**',
+    '**/public/**',
+  ]
+  
+  const fileWatcher = chokidar.watch(pathJoin(input, `**/*.md`), { ignored })
+  const dirWatcher = chokidar.watch(input, { ignored })
+  
+  let isFileReady = false
+  let isDirReady = false
+  let timer: NodeJS.Timer | null = null
+  const listener = (eventType: string) => {
+    return (pathname: string) => {
+      if (timer) {
+        clearTimeout(timer)
+        timer = null
+      }
+      timer = setTimeout(() => {
+        if (isFileReady && isDirReady) {
+          const file = path.join(process.cwd(), output)
+          fs.writeFileSync(
+            file,
+            `// event: ${ eventType }  path: ${ pathname }  ${ new Date() } `,
+          )
+        }
+      })
     }
   }
   
-  watcher
+  fileWatcher
     .on('ready', () => {
-      isReady = true
+      isFileReady = true
     })
-    .on('add', listener)
-    .on('addDir', listener)
-    .on('unlink', listener)
-    .on('unlinkDir', listener)
+    .on('add', listener('add'))
+    .on('unlink', listener('unlink'))
+    .on('error', console.error)
+  
+  dirWatcher
+    .on('ready', () => {
+      isDirReady = true
+    })
+    .on('addDir', listener('addDir'))
+    .on('unlinkDir', listener('unlinkDir'))
     .on('error', console.error)
   
   
@@ -41,7 +66,8 @@ const doWatch = (input: string, output: string) => {
   
   process.on('exit', async () => {
     console.log(chalk.green('[vitepress-helper]'), chalk.gray(`unwatch > ${ input }`))
-    await watcher.close()
+    await fileWatcher.close()
+    await dirWatcher.close()
     exec(`taskkill /PID ${ process.pid } /T /F`)
   })
   
@@ -55,7 +81,10 @@ program.command('watch')
   .option('-d, --dir [dir]', 'the directory to watch', 'docs')
   .option('-o, --output [output]', 'the file path used to trigger the restart', 'docs/.vitepress/helper/restart-trigger.ts')
   .action((args) => {
-    const { dir, output } = args
+    const {
+      dir,
+      output,
+    } = args
     doWatch(dir, output)
   })
 

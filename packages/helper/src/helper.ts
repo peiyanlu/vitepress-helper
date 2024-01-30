@@ -1,4 +1,4 @@
-import { sync } from 'fast-glob'
+import fg from 'fast-glob'
 import fs from 'fs'
 import matter from 'gray-matter'
 import { dirname, extname, parse } from 'path'
@@ -31,7 +31,7 @@ export const getNavItem = <T extends ExtendNavItem>(path: string, options?: Buil
     targetMDFile = 'index.md',
   } = options || {}
   
-  return sync(
+  return fg.sync(
     useCustomPath ? path : pathJoin(path, `/**/${ targetMDFile }`),
     {
       onlyFiles: false,
@@ -107,7 +107,7 @@ export const getSidebarItem = (path: string, options?: BuildSidebarOptions): Ext
     collapsed,
   } = options || {}
   const getItems = (path: string) => {
-    return sync(
+    return fg.sync(
       useCustomPath ? path : pathJoin(path, `/**`),
       {
         onlyFiles: false,

@@ -1,10 +1,10 @@
 import commonjs from '@rollup/plugin-commonjs'
+import json from '@rollup/plugin-json'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import { builtinModules, createRequire } from 'module'
 import { resolve } from 'path'
 import { defineConfig, type RollupOptions } from 'rollup'
 import dts from 'rollup-plugin-dts'
-import json from '@rollup/plugin-json'
 import esbuild from 'rollup-plugin-esbuild'
 import { fileURLToPath } from 'url'
 
@@ -31,10 +31,10 @@ const plugins = [
 ]
 
 const esmBuild: RollupOptions = {
-  input: [ r('src/helper.ts'), r('src/watcher.ts') ],
+  input: [ r('src/index.ts') ],
   output: {
     format: 'esm',
-    dir: r('dist'),
+    dir: r('lib'),
     entryFileNames: `[name].js`,
     chunkFileNames: 'chunk-[hash].js',
   },
@@ -46,10 +46,10 @@ const esmBuild: RollupOptions = {
 }
 
 const cjsBuild: RollupOptions = {
-  input: [ r('src/helper.ts') ],
+  input: [ r('src/index.ts') ],
   output: {
     format: 'cjs',
-    dir: r('dist'),
+    dir: r('lib'),
     entryFileNames: `[name].cjs`,
     chunkFileNames: 'chunk-[hash].cjs',
   },
@@ -61,10 +61,10 @@ const cjsBuild: RollupOptions = {
 }
 
 const nodeTypes: RollupOptions = {
-  input: r('src/helper.ts'),
+  input: [ r('src/index.ts') ],
   output: {
     format: 'esm',
-    file: 'dist/helper.d.ts',
+    dir: r('lib'),
   },
   external,
   plugins: [ dts() ],

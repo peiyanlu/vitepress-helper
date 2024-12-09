@@ -1,16 +1,25 @@
 import fg from 'fast-glob'
-import fs from 'fs'
+import { existsSync } from 'fs'
 import matter from 'gray-matter'
-import { dirname, extname, parse } from 'path'
-import type { BuildNavOptions, BuildSidebarOptions, CustomNavFrontMatter, CustomSidebarFrontMatter, ExtendNavItem, ExtendSidebarItem } from './helper-types'
+import { dirname, extname, join, parse } from 'path'
+import type {
+  BuildNavOptions,
+  BuildSidebarOptions,
+  CustomNavFrontMatter,
+  CustomSidebarFrontMatter,
+  ExtendNavItem,
+  ExtendSidebarItem,
+} from './types.js'
 
 
-export * from './helper-types'
+export const pathJoin = (...paths: string[]) => paths
+  .join('/')
+  .replace(/\/+/g, '/')
+  .replace(/(\.\/)+/g, '')
 
-export const pathJoin = (...paths: string[]) => paths.join('/').replace(/\/+/g, '/')
-
-export const pathToLink = (path: string, rootDir = 'docs'): string => path
-  .replace(new RegExp(`^${ rootDir }\/`), '/')
+export const pathToLink = (path: string, rootDir = '.', srcDir = '.'): string => path
+  .replace(new RegExp(`(^(\/?)${ rootDir }\/)+`, 'g'), '/')
+  .replace(new RegExp(`(^(\/?)${ srcDir }\/)+`, 'g'), '/')
   .replace('.md', '')
   .replace(/\/index$/g, '/')
   .replace(/\/+/g, '/')
@@ -19,66 +28,60 @@ export const pathToLink = (path: string, rootDir = 'docs'): string => path
  * Get the navigation
  *
  * By default, index.md in the root directory are ignored
- * @param {string} path
+ * @param {string} dir
  * @param {BuildNavOptions} options
  * @returns {T[]}
  */
-export const getNavItem = <T extends ExtendNavItem>(path: string, options?: BuildNavOptions): T[] => {
+export const getNavItem = <T extends ExtendNavItem>(dir: string, options: BuildNavOptions): T[] => {
   const {
     ignore = [],
-    rootDir = 'docs',
-    useCustomPath,
+    rootDir,
+    srcDir,
     targetMDFile = 'index.md',
-  } = options || {}
+  } = options
   
-  return fg.sync(
-    useCustomPath ? path : pathJoin(path, `/**/${ targetMDFile }`),
-    {
-      onlyFiles: false,
-      objectMode: true,
-      ignore: [ pathJoin(path, targetMDFile), ...ignore ],
-      deep: 2,
-    },
-  ).reduce<T[]>((groups, entry) => {
-    const {
-      path,
-      name,
-    } = entry
-    const data = matter.read(path).data as CustomNavFrontMatter
-    
-    if (data.ignore) return groups
-    
-    const link = pathToLink(path.startsWith(rootDir) ? path : pathJoin(rootDir, path), rootDir)
-    
-    const item = {
-      text: data.title ?? dirname(name),
-      activeMatch: link,
-      order: data.order ?? 0,
-      sidebar: data.sidebar ?? false,
-    } as T
-    
-    const noGroup = () => {
-      groups.push({
-        link: link,
-        ...item,
-      })
-    }
-    if (data.group) {
-      const items = getNavItem(dirname(path))
-      if (items.length > 0) {
-        groups.push({
-          items: items,
-          ...item,
-        })
+  const getItem = (dir: string, src: string) => {
+    const p = (path: string) => pathJoin(dir, src, path)
+    return fg.sync(
+      p(`**/${ targetMDFile }`),
+      {
+        onlyFiles: false,
+        objectMode: true,
+        ignore: [ p(targetMDFile), ...ignore ],
+        deep: 2,
+      },
+    ).reduce<T[]>((groups, entry) => {
+      const { path, name } = entry
+      
+      const data = matter.read(path).data as CustomNavFrontMatter
+      if (data.ignore) return groups
+      
+      const link = pathToLink(pathJoin('/', path), rootDir, srcDir)
+      
+      const item = {
+        text: data.title ?? dirname(name),
+        activeMatch: link,
+        order: data.order ?? 0,
+        sidebar: data.sidebar ?? false,
+      } as T
+      
+      const noGroup = () => groups.push({ link, ...item })
+      if (data.group) {
+        const items = getItem(dirname(path), '.')
+        if (items.length > 0) {
+          groups.push({ items, ...item })
+        } else {
+          noGroup()
+        }
       } else {
         noGroup()
       }
-    } else {
-      noGroup()
-    }
-    
-    return groups.sort((a, b) => a.order - b.order)
-  }, [])
+      
+      return groups.sort((a, b) => a.order - b.order)
+    }, [])
+  }
+  
+  return getItem(dir, srcDir)
 }
 
 export const flatNavs = (nav: ExtendNavItem[]): ExtendNavItem[] => {
@@ -91,95 +94,82 @@ export const flatNavs = (nav: ExtendNavItem[]): ExtendNavItem[] => {
  * Get the sidebar
  *
  * The img, components directories and index.md are ignored by default
- * @param {string} path
+ * @param {string} dir
  * @param {BuildSidebarOptions} options
  * @returns {DefaultTheme.SidebarItem[]}
  */
-export const getSidebarItem = (path: string, options?: BuildSidebarOptions): ExtendSidebarItem[] => {
+export const getSidebarItem = (dir: string, options: BuildSidebarOptions): ExtendSidebarItem[] => {
   const {
     ignore = [],
-    rootDir = 'docs',
-    useCustomPath,
-    sidebarMapping,
+    rootDir,
+    srcDir,
     showCount,
     targetMDFile = 'index.md',
-    groupWithLink,
-    collapsed,
-  } = options || {}
-  const getItems = (path: string) => {
+  } = options
+  
+  const getItems = (path: string, src: string) => {
+    const cwd = process.cwd()
+    
     return fg.sync(
-      useCustomPath ? path : pathJoin(path, `/**`),
+      pathJoin(src, path, `**`),
       {
         onlyFiles: false,
         objectMode: true,
-        ignore: [ pathJoin('**/', targetMDFile), ...ignore ],
+        ignore: [ pathJoin('**', targetMDFile), ...ignore ],
         deep: 1,
       },
     ).reduce<ExtendSidebarItem[]>((groups, article) => {
-      const {
-        path,
-        dirent,
-        name,
-      } = article
+      const { path, dirent, name } = article
       const isFile = dirent.isFile()
       
       if (isFile) {
         if ([ '.md' ].includes(extname(path))) {
           const data = matter.read(path).data as CustomSidebarFrontMatter
+          
           if (!data.ignore) {
             const { name: fileName } = parse(path)
             groups.push({
               text: data.title ?? fileName,
-              link: pathToLink(path, rootDir),
+              link: pathToLink(pathJoin('/', path), rootDir, srcDir),
               order: data.order ?? fileName.charCodeAt(0),
             })
           }
         }
       } else {
-        const items = getItems(path)
-        
-        const mapping = sidebarMapping?.[name]
-        const isStr = typeof mapping === 'string'
-        const textMapping = isStr ? mapping : mapping?.text ?? name
-        const orderMapping = isStr ? name.charCodeAt(0) : mapping?.order ?? name.charCodeAt(0)
-        const collapsedMapping = isStr ? true : mapping?.collapsed ?? true
-        const ignoreMapping = isStr ? false : mapping?.ignore ?? false
-        
+        const items = getItems(path, '.')
         const linkPath = pathJoin(path, targetMDFile)
+        const linkStr = pathToLink(pathJoin('/', linkPath), rootDir, srcDir)
+        const targetExist = existsSync(join(cwd, linkPath))
         
         const onlyItems = () => {
-          if (!ignoreMapping) {
-            groups.push({
-              text: showCount ? `[${ items.length }] ${ textMapping }` : textMapping,
-              items: items,
-              collapsed: collapsed ?? collapsedMapping,
-              order: orderMapping,
-            })
+          let text = name
+          let order = name.charCodeAt(0)
+          let collapsed = false
+          let link: string | undefined = undefined
+          
+          const data = targetExist ? matter.read(linkPath).data as CustomSidebarFrontMatter : undefined
+          if (data && !data.ignore) {
+            if (data.link) link = linkStr
+            if (data.title) text = data.title
+            if (data.order) order = data.order
+            if (data.collapsed) collapsed = data.collapsed
           }
+          
+          groups.push({
+            text: showCount ? `${ text } [ ${ items.length } ]` : text,
+            link,
+            items,
+            collapsed,
+            order,
+          })
         }
-        if (groupWithLink) {
-          if (fs.existsSync(linkPath)) {
-            const data = matter.read(linkPath).data as CustomSidebarFrontMatter
-            if (data.ignore ?? ignoreMapping) {
-              groups.push({
-                text: showCount ? `[${ items.length }] ${ data.title ?? textMapping }` : data.title ?? textMapping,
-                link: pathToLink(linkPath, rootDir),
-                items: items,
-                collapsed: collapsed ?? data.collapsed ?? collapsedMapping,
-                order: data.order ?? orderMapping,
-              })
-            }
-          } else {
-            onlyItems()
-          }
-        } else {
-          onlyItems()
-        }
+        
+        onlyItems()
       }
       
       return groups.sort((a, b) => a.order - b.order)
     }, [])
   }
   
-  return getItems(path)
+  return getItems(dir, srcDir)
 }

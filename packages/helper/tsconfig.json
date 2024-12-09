@@ -10,14 +10,20 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "noEmit": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "skipLibCheck": true
+    "noEmit": false,
+    "outDir": "./lib",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "declaration": true
   },
   "include": [
-    "src",
+    "./src",
     "rollup.config.ts"
+  ],
+  "exclude": [
+    "./lib"
   ]
 }

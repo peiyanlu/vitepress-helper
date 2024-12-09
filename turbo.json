@@ -1,9 +1,8 @@
 {
-  "pipeline": {
+  "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
+      "cache": false,
+      "persistent": true,
       "outputs": [
         "dist/**",
         ".next/**",
@@ -16,6 +15,14 @@
       "persistent": true
     },
     "docs:dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "docs:dev:root": {
+      "cache": false,
+      "persistent": true
+    },
+    "docs:dev:src": {
       "cache": false,
       "persistent": true
     }

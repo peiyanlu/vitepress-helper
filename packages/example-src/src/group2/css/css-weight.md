@@ -1,0 +1,6 @@
+---
+title: weight
+---
+
+
+# {{ $frontmatter.title }}

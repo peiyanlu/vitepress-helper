@@ -6,16 +6,15 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "docs:dev": "vitepress dev",
+    "docs:dev:root": "vitepress dev",
     "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview",
-    "watch": "vitepress-helper watch --dir ./ --output .vitepress/helper/restart-trigger.ts"
+    "docs:preview": "vitepress preview"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "vitepress-plugin-helper": "workspace:^",
-    "vue": "^3.3.4"
+    "vue": "^3.5.13"
   }
 }

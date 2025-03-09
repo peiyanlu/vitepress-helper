@@ -65,4 +65,8 @@ export interface BuildSidebarOptions extends BuildNavOptions {
    * Whether to display statistics on the number of articles in a group
    */
   showCount?: boolean;
+  /**
+   * An array of dirs to exclude matches.
+   */
+  ignoreDirs?: string[];
 }

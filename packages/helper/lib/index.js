@@ -63,7 +63,8 @@ const getSidebarItem = (dir, options) => {
     rootDir,
     srcDir,
     showCount,
-    targetMDFile = "index.md"
+    targetMDFile = "index.md",
+    ignoreDirs
   } = options;
   const getItems = (path, src) => {
     const cwd = process.cwd();
@@ -90,7 +91,7 @@ const getSidebarItem = (dir, options) => {
             });
           }
         }
-      } else {
+      } else if (!ignoreDirs?.includes(name)) {
         const items = getItems(path2, ".");
         const linkPath = pathJoin(path2, targetMDFile);
         const linkStr = pathToLink(pathJoin("/", linkPath), rootDir, srcDir);
@@ -131,7 +132,7 @@ const schedule = (fn, ms) => {
   }
   timer = setTimeout(fn, ms);
 };
-function VitePressHelperPlugin(options) {
+function vitePressHelperPlugin(options) {
   const { output, navOptions, sidebarOptions, log } = options ?? {};
   const n = (p) => normalizePath(p);
   let resolvedConfig;
@@ -201,4 +202,4 @@ function VitePressHelperPlugin(options) {
   };
 }
 
-export { VitePressHelperPlugin, flatNavs, getNavItem, getSidebarItem, pathJoin, pathToLink };
+export { vitePressHelperPlugin as VitePressHelperPlugin, flatNavs, getNavItem, getSidebarItem, pathJoin, pathToLink, vitePressHelperPlugin };

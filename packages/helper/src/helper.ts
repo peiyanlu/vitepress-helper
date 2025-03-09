@@ -105,6 +105,7 @@ export const getSidebarItem = (dir: string, options: BuildSidebarOptions): Exten
     srcDir,
     showCount,
     targetMDFile = 'index.md',
+    ignoreDirs,
   } = options
   
   const getItems = (path: string, src: string) => {
@@ -135,7 +136,7 @@ export const getSidebarItem = (dir: string, options: BuildSidebarOptions): Exten
             })
           }
         }
-      } else {
+      } else if (!ignoreDirs?.includes(name)) {
         const items = getItems(path, '.')
         const linkPath = pathJoin(path, targetMDFile)
         const linkStr = pathToLink(pathJoin('/', linkPath), rootDir, srcDir)

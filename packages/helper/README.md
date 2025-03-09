@@ -14,7 +14,7 @@ npm install vitepress-plugin-helper -D
 
 ```ts
 import { DefaultTheme, defineConfig } from 'vitepress'
-import { VitePressHelperPlugin } from 'vitepress-plugin-helper'
+import { vitePressHelperPlugin } from 'vitepress-plugin-helper'
 import { getNav, getSidebar } from './menu'
 
 
@@ -32,7 +32,7 @@ export default defineConfig({
   },
   vite: {
     plugins: [
-      VitePressHelperPlugin(),
+      vitePressHelperPlugin(),
     ],
   },
 })

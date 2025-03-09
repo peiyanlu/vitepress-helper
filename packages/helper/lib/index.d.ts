@@ -55,6 +55,10 @@ interface BuildSidebarOptions extends BuildNavOptions {
      * Whether to display statistics on the number of articles in a group
      */
     showCount?: boolean;
+    /**
+     * An array of dirs to exclude matches.
+     */
+    ignoreDirs?: string[];
 }
 
 declare module 'vite' {
@@ -69,7 +73,7 @@ interface VitePressHelperOptions {
     sidebarOptions?: Omit<BuildSidebarOptions, 'rootDir' | 'srcDir'>;
     log?: boolean;
 }
-declare function VitePressHelperPlugin(options?: VitePressHelperOptions): Plugin;
+declare function vitePressHelperPlugin(options?: VitePressHelperOptions): Plugin;
 
 declare const pathJoin: (...paths: string[]) => string;
 declare const pathToLink: (path: string, rootDir?: string, srcDir?: string) => string;
@@ -93,4 +97,4 @@ declare const flatNavs: (nav: ExtendNavItem[]) => ExtendNavItem[];
  */
 declare const getSidebarItem: (dir: string, options: BuildSidebarOptions) => ExtendSidebarItem[];
 
-export { type BuildNavOptions, type BuildSidebarOptions, type CustomFrontMatter, type CustomNavFrontMatter, type CustomSidebarFrontMatter, type ExtendNavItem, type ExtendSidebarItem, VitePressHelperPlugin, flatNavs, getNavItem, getSidebarItem, pathJoin, pathToLink };
+export { type BuildNavOptions, type BuildSidebarOptions, type CustomFrontMatter, type CustomNavFrontMatter, type CustomSidebarFrontMatter, type ExtendNavItem, type ExtendSidebarItem, vitePressHelperPlugin as VitePressHelperPlugin, flatNavs, getNavItem, getSidebarItem, pathJoin, pathToLink, vitePressHelperPlugin };

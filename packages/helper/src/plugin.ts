@@ -33,7 +33,7 @@ const schedule = (fn: () => void, ms: number) => {
 }
 
 
-export function VitePressHelperPlugin(options?: VitePressHelperOptions): Plugin {
+export function vitePressHelperPlugin(options?: VitePressHelperOptions): Plugin {
   const { output, navOptions, sidebarOptions, log } = options ?? {}
   
   const n = (p: string) => normalizePath(p)
@@ -122,3 +122,5 @@ export function VitePressHelperPlugin(options?: VitePressHelperOptions): Plugin 
     },
   }
 }
+
+export { vitePressHelperPlugin as VitePressHelperPlugin }

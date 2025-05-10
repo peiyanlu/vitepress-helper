@@ -117,7 +117,7 @@ export const getSidebar = () => ({
         }
       ],
       "collapsed": true,
-      "order": 1,
+      "order": 1
     },
     {
       "text": "CSS",
@@ -135,7 +135,7 @@ export const getSidebar = () => ({
         }
       ],
       "collapsed": true,
-      "order": 99,
+      "order": 99
     },
     {
       "text": "HTML",

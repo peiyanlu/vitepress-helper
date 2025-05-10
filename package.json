@@ -13,11 +13,11 @@
     "dev": "turbo run dev --no-daemon"
   },
   "keywords": [],
-  "packageManager": "pnpm@9.17.4",
+  "packageManager": "pnpm@10.10.0",
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "turbo": "^2.4.4",
+    "turbo": "^2.5.3",
     "vitepress": "1.6.3"
   }
 }

@@ -6,7 +6,7 @@
   "type": "module",
   "author": "PeiYanlu",
   "license": "MIT",
-  "main": "lib/index.cjs",
+  "main": "lib/index.js",
   "module": "lib/index.js",
   "types": "lib/index.d.ts",
   "exports": {
@@ -17,26 +17,19 @@
     }
   },
   "scripts": {
-    "build:tsc": "tsc -p ./tsconfig.json",
-    "build": "rollup --config rollup.config.ts --configPlugin esbuild --watch"
+    "build": "tsc -p ./tsconfig.json --watch"
   },
   "dependencies": {
-    "chalk": "^5.3.0",
-    "chokidar": "^4.0.1",
+    "chalk": "^5.4.1",
+    "chokidar": "^4.0.3",
     "commander": "^13.0.0",
     "fast-glob": "^3.3.2",
     "gray-matter": "^4.0.3",
     "vite": "^5.4.14"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.1",
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^16.0.0",
-    "@types/node": "^22.10.1",
-    "rollup": "4.40.2",
-    "rollup-plugin-dts": "^6.1.1",
-    "rollup-plugin-esbuild": "^6.0.0",
-    "typescript": "^5.7.2"
+    "@types/node": "^22.15.17",
+    "typescript": "^5.8.3"
   },
   "repository": {
     "type": "git",

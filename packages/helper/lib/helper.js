@@ -5,11 +5,11 @@ import { dirname, extname, join, parse } from 'path';
 export const pathJoin = (...paths) => paths
     .join('/')
     .replace(/\/+/g, '/')
-    .replace(/(\.\/)+/g, '');
+    .replace(/(\.\/)+/g, ''); // './index.md' -> 'index.md'
 export const pathToLink = (path, rootDir = '.', srcDir = '.') => path
     .replace(new RegExp(`(^(\/?)${rootDir}\/)+`, 'g'), '/')
     .replace(new RegExp(`(^(\/?)${srcDir}\/)+`, 'g'), '/')
-    .replace('.md', '')
+    .replace(/\.md$/i, '')
     .replace(/\/index$/g, '/')
     .replace(/\/+/g, '/');
 /**
@@ -24,12 +24,14 @@ export const getNavItem = (dir, options) => {
     const { ignore = [], rootDir, srcDir, targetMDFile = 'index.md', } = options;
     const getItem = (dir, src) => {
         const p = (path) => pathJoin(dir, src, path);
-        return fg.sync(p(`**/${targetMDFile}`), {
+        return fg
+            .sync(p(`**/${targetMDFile}`), {
             onlyFiles: false,
             objectMode: true,
             ignore: [p(targetMDFile), ...ignore],
             deep: 2,
-        }).reduce((groups, entry) => {
+        })
+            .reduce((groups, entry) => {
             const { path, name } = entry;
             const data = matter.read(path).data;
             if (data.ignore)
@@ -76,12 +78,14 @@ export const getSidebarItem = (dir, options) => {
     const { ignore = [], rootDir, srcDir, showCount, targetMDFile = 'index.md', ignoreDirs, } = options;
     const getItems = (path, src) => {
         const cwd = process.cwd();
-        return fg.sync(pathJoin(src, path, `**`), {
+        return fg
+            .sync(pathJoin(src, path, `**`), {
             onlyFiles: false,
             objectMode: true,
             ignore: [pathJoin('**', targetMDFile), ...ignore],
             deep: 1,
-        }).reduce((groups, article) => {
+        })
+            .reduce((groups, article) => {
             const { path, dirent, name } = article;
             const isFile = dirent.isFile();
             if (isFile) {

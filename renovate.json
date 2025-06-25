@@ -8,6 +8,5 @@
   },
   "ignorePaths": [
     "**/pnpm-lock.yaml"
-  ],
-  "requireLockfile": false
+  ]
 }

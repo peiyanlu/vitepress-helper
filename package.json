@@ -17,8 +17,10 @@
     }
   },
   "scripts": {
-    "dev": "tsc -p tsconfig.json --watch",
-    "build": "tsc -p tsconfig.json"
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "prepublish": "tsc",
+    "release": "release-it"
   },
   "dependencies": {
     "fast-glob": "^3.3.3",
@@ -28,7 +30,10 @@
     "@types/node": "^22.15.17",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
-    "vitepress": "^2.0.0-alpha.7"
+    "vitepress": "^2.0.0-alpha.7",
+    "@release-it/conventional-changelog": "^10.0.1",
+    "release-it-pnpm": "^4.6.5",
+    "release-it": "^19.0.2"
   },
   "repository": {
     "type": "git",

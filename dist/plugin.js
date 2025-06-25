@@ -47,7 +47,8 @@ export function vitePressHelperPlugin(options) {
                         return sidebar;
                     }, {});
                     const header = `import { DefaultTheme } from "vitepress"`;
-                    const navStr = `export const getNav = () => ${JSON.stringify(nav, null, 2)} as unknown as DefaultTheme.NavItem[]`;
+                    const navs = JSON.stringify(nav, null, 2);
+                    const navStr = `export const getNav = () => ${navs} as unknown as DefaultTheme.NavItem[]`;
                     const sidebarStr = `export const getSidebar = () => (${JSON.stringify(sidebar, null, 2)})`;
                     const file = n(join(configDir, output ?? `menu${ext}`));
                     await writeFile(file, [header, navStr, sidebarStr].join('\n\n'));

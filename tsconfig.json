@@ -11,7 +11,7 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "noEmit": false,
-    "outDir": "./lib",
+    "outDir": "dist",
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noImplicitReturns": false,
@@ -20,9 +20,9 @@
     "declaration": true
   },
   "include": [
-    "./src"
+    "src"
   ],
   "exclude": [
-    "./lib"
+    "dist"
   ]
 }

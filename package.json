@@ -1,23 +1,57 @@
 {
-  "name": "vitepress-helper",
-  "private": true,
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "docs:dev": "turbo run docs:dev --no-daemon",
-    "docs:dev:root": "turbo run docs:dev:root --no-daemon",
-    "docs:dev:src": "turbo run docs:dev:src --no-daemon",
-    "build": "turbo run build --no-daemon",
-    "dev": "turbo run dev --no-daemon"
-  },
-  "keywords": [],
-  "packageManager": "pnpm@10.12.2",
-  "author": "",
+  "name": "vitepress-plugin-helper",
+  "private": false,
+  "version": "1.0.4",
+  "description": "A VitePress plugin that helps generate nav and sidebars and watch MarkDown file changes to restart the service",
+  "type": "module",
+  "author": "PeiYanlu",
   "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "tsc -p tsconfig.json --watch",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.3",
+    "gray-matter": "^4.0.3"
+  },
   "devDependencies": {
-    "turbo": "^2.5.3",
+    "@types/node": "^22.15.17",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
     "vitepress": "^2.0.0-alpha.7"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:peiyanlu/vitepress-plugin-helper.git"
+  },
+  "homepage": "https://github.com/peiyanlu/vitepress-plugin-helper/blob/master/README.md",
+  "bugs": {
+    "url": "https://github.com/peiyanlu/vitepress-plugin-helper/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org"
+  },
+  "files": [
+    "dist",
+    "img",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "vitepress",
+    "helper",
+    "sidebar",
+    "nav",
+    "auto"
+  ]
 }
